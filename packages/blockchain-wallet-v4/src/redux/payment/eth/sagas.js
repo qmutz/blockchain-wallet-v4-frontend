@@ -37,7 +37,7 @@ const taskToPromise = t =>
       .chain().amount(myAmount).done()
 */
 
-export default ({ api }) => {
+export default ({ api, imports }) => {
   const settingsSagas = settingsSagaFactory({ api })
   const selectIndex = function * (from) {
     const appState = yield select(identity)
@@ -60,6 +60,7 @@ export default ({ api }) => {
   }
 
   const calculateSignature = function * (
+    imports,
     network,
     password,
     transport,
@@ -70,7 +71,7 @@ export default ({ api }) => {
     switch (raw.fromType) {
       case ADDRESS_TYPES.ACCOUNT: {
         const appState = yield select(identity)
-        const mnemonicT = S.wallet.getMnemonic(appState, password)
+        const mnemonicT = S.wallet.getMnemonic(imports, appState, password)
         const mnemonic = yield call(() => taskToPromise(mnemonicT))
         const sign = data =>
           isErc20
@@ -288,7 +289,7 @@ export default ({ api }) => {
       * signLegacy (password) {
         try {
           const appState = yield select(identity)
-          const seedHexT = S.wallet.getSeedHex(appState, password)
+          const seedHexT = S.wallet.getSeedHex(imports, appState, password)
           const seedHex = yield call(() => taskToPromise(seedHexT))
           const signLegacy = data =>
             taskToPromise(eth.signLegacy(network, seedHex, data))

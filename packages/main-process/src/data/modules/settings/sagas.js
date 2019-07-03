@@ -19,7 +19,7 @@ export const ipRestrictionError =
 
 export const logLocation = 'modules/settings/sagas'
 
-export default ({ api, coreSagas }) => {
+export default ({ api, coreSagas, imports }) => {
   const { syncUserWithWallet } = profileSagas({
     api,
     coreSagas
@@ -142,7 +142,7 @@ export default ({ api, coreSagas }) => {
   const updateLanguage = function * (action) {
     try {
       yield call(coreSagas.settings.setLanguage, action.payload)
-      addLanguageToUrl(action.payload.language)
+      imports.addLanguageToUrl(action.payload.language)
     } catch (e) {
       yield put(actions.logs.logErrorMessage(logLocation, 'updateLanguage', e))
     }

@@ -19,13 +19,14 @@ import httpService from './http'
 import apiAuthorize from './apiAuthorize'
 
 export default ({
+  imports,
   options,
   apiKey,
   getAuthCredentials,
   reauthenticate,
   networks
 } = {}) => {
-  const http = httpService({ apiKey })
+  const http = httpService({ apiKey, imports })
   const authorizedHttp = apiAuthorize(http, getAuthCredentials, reauthenticate)
   const apiUrl = options.domains.api
   const horizonUrl = options.domains.horizon
@@ -58,7 +59,7 @@ export default ({
       ...http
     }),
     ...sfox(),
-    ...settings({ rootUrl, ...http }),
+    ...settings({ imports, rootUrl, ...http }),
     ...shapeShift({ shapeShiftApiKey, ...http }),
     ...rates({ nabuUrl, ...authorizedHttp }),
     ...trades({ nabuUrl, ...authorizedHttp }),

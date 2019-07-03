@@ -84,10 +84,20 @@ export const deriveAccountNodeAtIndex = (seedHex, index, network) => {
     .deriveHardened(index)
 }
 
-export const generateAccount = curry((index, label, network, seedHex) => {
-  let node = deriveAccountNodeAtIndex(seedHex, index, network)
+export const generateAccount = async ({
+  deriveBIP32Key,
+  index,
+  label,
+  network
+}) => {
+  const key = await deriveBIP32Key({
+    network,
+    path: `m/44'/0'/${index}'`
+  })
+
+  const node = Bitcoin.HDNode.fromBase58(key)
   return HDAccount.fromJS(HDAccount.js(label, node, null))
-})
+}
 
 // encrypt :: Number -> String -> String -> HDWallet -> Task Error HDWallet
 export const encrypt = curry((iterations, sharedKey, password, hdWallet) => {
